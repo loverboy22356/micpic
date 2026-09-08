@@ -31,6 +31,7 @@ class ProfileMediaSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    is_verified = serializers.BooleanField(source='user.is_verified', read_only=True)
     entertainment = EntertainmentSerializer(many=True, read_only=True)
     sport = SportSerializer(many=True, read_only=True)
     plan = PlanSerializer(required=False)
@@ -50,7 +51,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'email', 'first_name', 'last_name', 'profile_picture', 'gender', 'date_of_birth',
                   'sexual_orientation', 'zodiac_sign', 'entertainment', 'sport', 'why_are_you_here',
                   'relationship_status', 'longitude', 'latitude', 'bio', 'plan', 'referral_code',
-                  'occupation', 'height', 'is_reported', 'is_location', 'is_incognito', 'medias', 'uploaded_medias', 'location_name', 'distance']
+                  'occupation', 'height', 'is_reported', 'is_location', 'is_incognito', 'medias', 'uploaded_medias', 'location_name', 'distance', 'is_verified']
     
     def validate_longitude(self, value):
         return None if value == '' else value
