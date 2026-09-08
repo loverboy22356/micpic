@@ -60,7 +60,7 @@ class ProviderAuthSerializer(serializers.ModelSerializer):
             if not phone_number:
                 raise serializers.ValidationError("Phone number is required for new users.")
 
-            data['is_verified'] = True
+            data['is_verified'] = False
             data['is_new_user'] = True
 
             email = data.get('email')
