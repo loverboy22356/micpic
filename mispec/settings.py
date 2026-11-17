@@ -34,6 +34,19 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
 
+# Deployment behind Nginx on the Whogohost VPS: Nginx terminates TLS and
+# forwards the original protocol/host.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
+# Required for the admin login form and any POST over HTTPS.
+# Example: CSRF_TRUSTED_ORIGINS=https://api.mispec.co.uk
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in config('CSRF_TRUSTED_ORIGINS', default='').split(',')
+    if origin.strip()
+]
+
 
 # Application definition
 
@@ -151,15 +164,20 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Africa/Lagos'
 
-CELERY_BROKER_TRANSPORT_OPTIONS = {
-    'ssl': {
+# Redis on the Whogohost VPS runs locally without TLS, so only configure TLS
+# options when REDIS_URL is a rediss:// endpoint.
+if CELERY_BROKER_URL.startswith('rediss://'):
+    CELERY_BROKER_TRANSPORT_OPTIONS = {
+        'ssl': {
+            'ssl_cert_reqs': 'none'
+        }
+    }
+    CELERY_REDIS_BACKEND_USE_SSL = {
         'ssl_cert_reqs': 'none'
     }
-}
-
-CELERY_REDIS_BACKEND_USE_SSL = {
-    'ssl_cert_reqs': 'none'
-}
+else:
+    CELERY_BROKER_TRANSPORT_OPTIONS = {}
+    CELERY_REDIS_BACKEND_USE_SSL = False
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -303,9 +321,16 @@ cloudinary.config(
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-firebase_cred_path = "firebase/mispec-3f038-firebase-adminsdk.json"
-if os.path.exists(firebase_cred_path):
-    cred = credentials.Certificate(firebase_cred_path)
+firebase_cred_path = config(
+    'GOOGLE_SERVICE_ACCOUNT_FILE',
+    default='firebase/mispec-3f038-firebase-adminsdk.json',
+)
+firebase_cred_path = Path(firebase_cred_path)
+if not firebase_cred_path.is_absolute():
+    firebase_cred_path = BASE_DIR / firebase_cred_path
+
+if firebase_cred_path.exists():
+    cred = credentials.Certificate(str(firebase_cred_path))
     firebase_admin.initialize_app(cred)
 
 # Whitenoise for static files

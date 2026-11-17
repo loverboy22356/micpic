@@ -1,0 +1,19 @@
+[Unit]
+Description=MISPEC Celery beat scheduler
+After=network.target postgresql.service redis-server.service
+Wants=postgresql.service redis-server.service
+
+[Service]
+Type=simple
+User=mispec
+WorkingDirectory=/home/mispec/app
+Environment=PYTHONUNBUFFERED=1
+Environment=DJANGO_SETTINGS_MODULE=mispec.settings
+ExecStart=/home/mispec/app/venv/bin/celery -A mispec beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+Restart=always
+RestartSec=10
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

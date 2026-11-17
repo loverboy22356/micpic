@@ -1,0 +1,24 @@
+[Unit]
+Description=MISPEC API (Gunicorn)
+After=network.target postgresql.service redis-server.service
+Wants=postgresql.service redis-server.service
+
+[Service]
+Type=simple
+User=mispec
+Group=www-data
+WorkingDirectory=/home/mispec/app
+Environment=PYTHONUNBUFFERED=1
+Environment=DJANGO_SETTINGS_MODULE=mispec.settings
+ExecStart=/home/mispec/app/venv/bin/gunicorn -c /home/mispec/app/deploy/whogohost/gunicorn.conf.py mispec.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=5
+KillSignal=SIGTERM
+TimeoutStopSec=30
+# Basic hardening
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

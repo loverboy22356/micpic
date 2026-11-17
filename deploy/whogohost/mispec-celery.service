@@ -1,0 +1,20 @@
+[Unit]
+Description=MISPEC Celery worker
+After=network.target postgresql.service redis-server.service
+Wants=postgresql.service redis-server.service
+
+[Service]
+Type=simple
+User=mispec
+WorkingDirectory=/home/mispec/app
+Environment=PYTHONUNBUFFERED=1
+Environment=DJANGO_SETTINGS_MODULE=mispec.settings
+# Default queue plus the geocoding queue routed in mispec/celery.py
+ExecStart=/home/mispec/app/venv/bin/celery -A mispec worker -Q celery,geocoding_queue --concurrency=2 --loglevel=info
+Restart=always
+RestartSec=10
+KillSignal=SIGTERM
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target

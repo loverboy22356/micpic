@@ -45,6 +45,7 @@ env
 .env.local
 mispec/.env.local
 firebase/*.json
+mispec-dating-app-cef3112fd645.json
 gpay/*.json
 # Large media files
 *.mp4
