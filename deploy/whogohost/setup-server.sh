@@ -90,8 +90,9 @@ echo "==> Enabling services"
 systemctl enable --now postgresql nginx
 
 echo "==> Firewall (SSH, HTTP, HTTPS only)"
-ufw allow OpenSSH
-ufw allow 'Nginx Full'
+ufw allow 22/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
 yes | ufw enable || true
 
 cat <<EOF

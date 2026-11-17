@@ -15,6 +15,10 @@
 
 Buy path in the Whogohost client area: **Products → VPS Hosting → choose a plan → OS: Ubuntu 22.04 LTS** (or 24.04). Provisioning is instant; you get an email with the server IPv4 and root password.
 
+> **This account's server is C1 (₦11,050/mo, 1 GB RAM, 20 GB SSD).** Gunicorn is capped at 2 workers and Celery at concurrency 1 so the stack fits, which makes the swap file mandatory rather than optional. Watch `free -m`; if swap is heavily used under normal traffic, upgrade to C2 (2 GB) from the Whogohost panel — upgrades happen without downtime.
+>
+> **The OS must be Ubuntu 22.04 or 24.04 LTS.** Debian 13 (trixie) ships Python 3.13, but `requirements.txt` pins `Django==5.0.2` (supported on Python 3.10–3.12) and `psycopg2-binary==2.9.9` has no 3.13 wheels. If the server was provisioned with Debian, reinstall it as Ubuntu from **Server → Reinstall** before running `setup-server.sh` — that erases the disk, so do it before anything is deployed.
+
 This backend is a Django 5 + DRF app that also needs **PostgreSQL**, **Redis** and **three long-running processes**:
 
 - `gunicorn mispec.wsgi:application` — the HTTP API

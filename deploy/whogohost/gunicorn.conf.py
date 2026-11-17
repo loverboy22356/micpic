@@ -7,9 +7,9 @@ import os
 
 bind = os.environ.get("GUNICORN_BIND", "127.0.0.1:8000")
 
-# Small VPS friendly: 2 * cores + 1, capped at 5 workers.
+# Small VPS friendly: 2 * cores + 1, capped at 2 workers (C1 plan = 1 GB RAM).
 _cpu_workers = 2 * (multiprocessing.cpu_count() or 1) + 1
-workers = int(os.environ.get("GUNICORN_WORKERS", min(_cpu_workers, 5)))
+workers = int(os.environ.get("GUNICORN_WORKERS", min(_cpu_workers, 2)))
 
 worker_class = "sync"
 threads = 1
