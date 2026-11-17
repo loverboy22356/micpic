@@ -105,8 +105,8 @@ Save that password now — it is only printed once. Put it in ${APP_DIR}/.env.
 
 Next steps (see deploy/whogohost/README.md):
   1. git clone <your repo> ${APP_DIR}   (then: chown -R ${APP_USER}:${APP_USER} ${APP_DIR})
-  2. sudo -u ${APP_USER} cp ${APP_DIR}/backend/deploy/whogohost/env.example ${APP_DIR}/backend/.env  and fill it in
-  3. bash ${APP_DIR}/backend/deploy/whogohost/deploy.sh
+  2. sudo -u ${APP_USER} cp ${APP_DIR}/deploy/whogohost/env.example ${APP_DIR}/backend/.env  and fill it in
+  3. bash ${APP_DIR}/deploy/whogohost/deploy.sh
   4. Install the nginx site + systemd units from deploy/whogohost/
   5. Run certbot for HTTPS
 EOF

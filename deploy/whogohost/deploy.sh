@@ -4,7 +4,7 @@
 set -euo pipefail
 
 APP_DIR=/home/mispec/app
-BACKEND_DIR="${APP_DIR}/backend"
+BACKEND_DIR="${APP_DIR}"   # the GitHub repo root is the backend dir
 VENV="${APP_DIR}/venv"
 SERVICES=(mispec-web mispec-celery mispec-celerybeat)
 

@@ -74,7 +74,7 @@ git clone -b deploy https://github.com/loverboy22356/micpic.git /home/mispec/app
 Run the bootstrap script:
 
 ```bash
-cd /home/mispec/app/backend/deploy/whogohost
+cd /home/mispec/app/deploy/whogohost
 bash setup-server.sh
 ```
 
@@ -90,7 +90,7 @@ su - mispec
 ## Step 3 — Configure the environment
 
 ```bash
-cd /home/mispec/app/backend
+cd /home/mispec/app
 cp deploy/whogohost/env.example .env
 nano .env
 ```
@@ -111,13 +111,13 @@ Notes:
 
 - `python-decouple` reads `.env` from the backend folder automatically, so systemd does not need an `EnvironmentFile`.
 - The Pusher credentials are read as **`app_id`, `key`, `secret`, `cluster`** (lowercase) by `mispec/settings.py`. Use those exact names.
-- Upload the Firebase service-account JSON to the server (e.g. `/home/mispec/app/backend/firebase/mispec-firebase-adminsdk.json`). Do **not** commit it. If the path does not exist, Firebase simply is not initialised.
+- Upload the Firebase service-account JSON to the server (e.g. `/home/mispec/app/firebase/mispec-firebase-adminsdk.json`). Do **not** commit it. If the path does not exist, Firebase simply is not initialised.
 - Uploads go to **Cloudinary** (`DEFAULT_FILE_STORAGE`), so no media volume is required.
 
 ## Step 4 — First deploy
 
 ```bash
-cd /home/mispec/app/backend
+cd /home/mispec/app
 bash deploy/whogohost/deploy.sh
 ```
 
@@ -135,9 +135,9 @@ curl -s http://127.0.0.1:8000/api/api.json/ -o /dev/null -w "%{http_code}\n"   #
 **Run this as root** — type `exit` to leave the `mispec` shell you entered in Step 3.
 
 ```bash
-sudo cp /home/mispec/app/backend/deploy/whogohost/mispec-web.service        /etc/systemd/system/
-sudo cp /home/mispec/app/backend/deploy/whogohost/mispec-celery.service      /etc/systemd/system/
-sudo cp /home/mispec/app/backend/deploy/whogohost/mispec-celerybeat.service  /etc/systemd/system/
+sudo cp /home/mispec/app/deploy/whogohost/mispec-web.service        /etc/systemd/system/
+sudo cp /home/mispec/app/deploy/whogohost/mispec-celery.service      /etc/systemd/system/
+sudo cp /home/mispec/app/deploy/whogohost/mispec-celerybeat.service  /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now mispec-web mispec-celery mispec-celerybeat
 sudo systemctl status mispec-web --no-pager
@@ -153,7 +153,7 @@ Gunicorn binds `127.0.0.1:8000` only — nothing is public yet.
 Still as **root**.
 
 ```bash
-sudo cp /home/mispec/app/backend/deploy/whogohost/nginx-mispec.conf /etc/nginx/sites-available/mispec.conf
+sudo cp /home/mispec/app/deploy/whogohost/nginx-mispec.conf /etc/nginx/sites-available/mispec.conf
 sudo nano /etc/nginx/sites-available/mispec.conf      # set server_name to your real domain
 sudo ln -s /etc/nginx/sites-available/mispec.conf /etc/nginx/sites-enabled/mispec.conf
 sudo rm -f /etc/nginx/sites-enabled/default
